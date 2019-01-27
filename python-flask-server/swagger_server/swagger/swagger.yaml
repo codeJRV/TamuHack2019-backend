@@ -1,0 +1,102 @@
+---
+swagger: "2.0"
+info:
+  description: "This is a rest endpoint for Flight Baggage loader"
+  version: "1.0.0"
+  title: "Flight API"
+  contact:
+    email: "jibin@tamu.edu"
+host: "0.0.0.0:8080"
+basePath: "/bagloader/"
+tags:
+- name: "BagLoader"
+  description: "Operations on Baggage Loader"
+schemes:
+- "https"
+- "http"
+paths:
+  /load:
+    post:
+      tags:
+      - "BagLoader"
+      summary: "Load a bag into the airplane"
+      operationId: "load_bag"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Request a bag to be loaded. Give a unique name for your luggage "
+        required: true
+        schema:
+          $ref: "#/definitions/Bag"
+      responses:
+        200:
+          description: "Successful operation. BagLoader container will return a response\
+            \ with a unique Id and status for the bag"
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        400:
+          description: "Invalid request supplied. Check configurations and resend\
+            \ the request"
+      x-swagger-router-controller: "swagger_server.controllers.bagloader_controller"
+  /{bagId}:
+    get:
+      tags:
+      - "BagLoader"
+      summary: "Get bag location from Id"
+      description: ""
+      operationId: "get_bag_by_id"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "bagId"
+        in: "path"
+        description: "The id of the bag that needs to be fetched."
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successfully retrieved the bag"
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        404:
+          description: "bag not found"
+      x-swagger-router-controller: "swagger_server.controllers.bagloader_controller"
+    delete:
+      tags:
+      - "BagLoader"
+      summary: "Delete Bag"
+      operationId: "delete_bag"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "bagId"
+        in: "path"
+        description: "The bag that needs to be deleted"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Bag succesfully deleted"
+        404:
+          description: "Bag not found"
+      x-swagger-router-controller: "swagger_server.controllers.bagloader_controller"
+definitions:
+  Bag:
+    type: "object"
+    properties:
+      bagId:
+        type: "string"
+        example: "LEV3J_1"
+      bagWeight:
+        type: "integer"
+        example: 20
+    xml:
+      name: "Bag"
+  ApiResponse:
+    type: "string"
+    example: "37_Mid"

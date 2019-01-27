@@ -1,0 +1,286 @@
+---
+swagger: "2.0"
+info:
+  description: "This is a rest endpoint for Flight Baggage loader"
+  version: "1.0.0"
+  title: "Flight API"
+  contact:
+    email: "jibin@tamu.edu"
+host: "0.0.0.0:8080"
+basePath: "/bagloader/"
+tags:
+- name: "BagLoader"
+  description: "Operations on Baggage Loader"
+schemes:
+- "https"
+- "http"
+paths:
+  /load:
+    post:
+      tags:
+      - "BagLoader"
+      summary: "Load a bag into the airplane"
+      operationId: "load_bag"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Request a bag to be loaded. Give a unique name for\
+          \ your luggage "
+        required: true
+        schema:
+          $ref: "#/definitions/Bag"
+      responses:
+        200:
+          description: "Successful operation. BagLoader container will return a response\
+            \ with a unique Id and status for the bag"
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        400:
+          description: "Invalid request supplied. Check configurations and resend\
+            \ the request"
+      x-swagger-router-controller: "swagger_server.controllers.bagloader_controller"
+  /login:
+    get:
+      tags:
+      - "BagLoader"
+      summary: "Logs user into the system"
+      description: ""
+      operationId: "login_user"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "username"
+        in: "query"
+        description: "The user name for login"
+        required: true
+        type: "string"
+      - name: "password"
+        in: "query"
+        description: "The password for login in clear text"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+          headers:
+            X-Rate-Limit:
+              type: "integer"
+              format: "int32"
+              description: "calls per hour allowed by the user"
+            X-Expires-After:
+              type: "string"
+              format: "date-time"
+              description: "date in UTC when token expires"
+        400:
+          description: "Invalid username/password supplied"
+      x-swagger-router-controller: "swagger_server.controllers.bagloader_controller"
+  /logout:
+    get:
+      tags:
+      - "BagLoader"
+      summary: "Logs out current logged in user session"
+      description: ""
+      operationId: "logout_user"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+      x-swagger-router-controller: "swagger_server.controllers.bagloader_controller"
+  /bags:
+    get:
+      tags:
+      - "BagLoader"
+      summary: "Get all bag ids"
+      description: ""
+      operationId: "get_bags"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "Summary of all bag names and Id's"
+          schema:
+            type: "array"
+            xml:
+              name: "Bags"
+              wrapped: true
+            items:
+              $ref: "#/definitions/inline_response_default"
+      x-swagger-router-controller: "swagger_server.controllers.bagloader_controller"
+  /{bagId}:
+    get:
+      tags:
+      - "BagLoader"
+      summary: "Get bag status from Id"
+      description: ""
+      operationId: "get_bag_by_id"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "bagId"
+        in: "path"
+        description: "The id of the bag that needs to be fetched."
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successfully retrieved the bag"
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        404:
+          description: "bag not found"
+      x-swagger-router-controller: "swagger_server.controllers.bagloader_controller"
+    put:
+      tags:
+      - "BagLoader"
+      summary: "Update bag configs"
+      description: "This can only be done by the logged in user."
+      operationId: "update_bag"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "bagId"
+        in: "path"
+        description: "bag that need to be updated"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Updated bag object"
+        required: true
+        schema:
+          $ref: "#/definitions/Bag"
+      responses:
+        200:
+          description: "Bag succesfully updated and restarted"
+        201:
+          description: "Bag succesfully updated and added to run queue"
+        400:
+          description: "Invalid bag supplied"
+        404:
+          description: "Bag not found"
+      x-swagger-router-controller: "swagger_server.controllers.bagloader_controller"
+    delete:
+      tags:
+      - "BagLoader"
+      summary: "Delete Bag"
+      description: "This can only be done by the logged in user."
+      operationId: "delete_bag"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "bagId"
+        in: "path"
+        description: "The bag that needs to be deleted"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Bag succesfully deleted"
+        404:
+          description: "Bag not found"
+      x-swagger-router-controller: "swagger_server.controllers.bagloader_controller"
+definitions:
+  Bag:
+    type: "object"
+    properties:
+      bagName:
+        type: "string"
+        example: "demo01"
+      configPath:
+        type: "string"
+        example: "/driveconst/shared/default/config"
+      rigPath:
+        type: "string"
+        example: "/driveconst/shared/default/rig/rig.json"
+      logPath:
+        type: "string"
+        example: "/driveconst/shared/logs/"
+      traceSplitterConfigPath:
+        type: "string"
+        example: "/driveconst/shared/default/tracesplitter_config/tracesplitterTemplate.json"
+      traceDataPath:
+        type: "string"
+        example: "/driveconst/bagloader-test-set/data/hyperion/us/pn-meta-20171003-171818-106232"
+      mode:
+        type: "string"
+        example: "HIL"
+        description: "Mode of running bagloader: HIL or SIL"
+        enum:
+        - "HIL"
+        - "SIL"
+      camera:
+        type: "string"
+        example: "HDMItoGMSL"
+        description: "Mode of running camera output: HDMItoGMSL or EthernetIP"
+        enum:
+        - "HDMItoGMSL"
+        - "EthernetIP"
+      workflow:
+        type: "string"
+        example: "Developer"
+        description: "Mode of running BagLoader workflow"
+        enum:
+        - "AWS"
+        - "Developer"
+        - "Production"
+        - "CI"
+    example:
+      traceDataPath: "/driveconst/bagloader-test-set/data/hyperion/us/pn-meta-20171003-171818-106232"
+      mode: "HIL"
+      rigPath: "/driveconst/shared/default/rig/rig.json"
+      workflow: "Developer"
+      logPath: "/driveconst/shared/logs/"
+      traceSplitterConfigPath: "/driveconst/shared/default/tracesplitter_config/tracesplitterTemplate.json"
+      configPath: "/driveconst/shared/default/config"
+      camera: "HDMItoGMSL"
+      bagName: "demo01"
+    xml:
+      name: "Bag"
+  ApiResponse:
+    type: "object"
+    properties:
+      code:
+        type: "integer"
+        format: "int32"
+        example: 0
+      bagId:
+        type: "string"
+        example: "4198a669-cbcb-4ddd-9bbc-b7c9bb6f9ae7"
+      description:
+        type: "string"
+        example: "Bag is currently running"
+      bagPath:
+        type: "string"
+        example: "/driveconst/share/bags/demo01"
+    description: "Status codes for states that calls to the API  generate"
+    example:
+      bagPath: "/driveconst/share/bags/demo01"
+      code: 0
+      description: "Bag is currently running"
+      bagId: "4198a669-cbcb-4ddd-9bbc-b7c9bb6f9ae7"
+  inline_response_default:
+    properties:
+      bagId:
+        type: "string"
+        example: "4198a669-cbcb-4ddd-9bbc-b7c9bb6f9ae7"
+      bagName:
+        type: "string"
+        example: "demo01"
+    example:
+      bagId: "4198a669-cbcb-4ddd-9bbc-b7c9bb6f9ae7"
+      bagName: "demo01"
+
