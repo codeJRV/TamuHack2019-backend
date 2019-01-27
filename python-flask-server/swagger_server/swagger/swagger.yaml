@@ -40,7 +40,7 @@ paths:
         400:
           description: "Invalid request supplied. Check configurations and resend\
             \ the request"
-      x-swagger-router-controller: "swagger_server.controllers.bagloader_controller"
+      x-swagger-router-controller: "swagger_server.controllers.bag_loader_controller"
   /{bagId}:
     get:
       tags:
@@ -64,7 +64,7 @@ paths:
             $ref: "#/definitions/ApiResponse"
         404:
           description: "bag not found"
-      x-swagger-router-controller: "swagger_server.controllers.bagloader_controller"
+      x-swagger-router-controller: "swagger_server.controllers.bag_loader_controller"
     delete:
       tags:
       - "BagLoader"
@@ -84,7 +84,7 @@ paths:
           description: "Bag succesfully deleted"
         404:
           description: "Bag not found"
-      x-swagger-router-controller: "swagger_server.controllers.bagloader_controller"
+      x-swagger-router-controller: "swagger_server.controllers.bag_loader_controller"
 definitions:
   Bag:
     type: "object"
