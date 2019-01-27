@@ -103,5 +103,9 @@ definitions:
       location:
         type: "string"
         example: "Mid_37"
+      color:
+        type: "string"
+        example: "Red"
     example:
+      color: "Red"
       location: "Mid_37"

@@ -15,21 +15,26 @@ class ApiResponse(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, location: str=None):  # noqa: E501
+    def __init__(self, location: str=None, color: str=None):  # noqa: E501
         """ApiResponse - a model defined in Swagger
 
         :param location: The location of this ApiResponse.  # noqa: E501
         :type location: str
+        :param color: The color of this ApiResponse.  # noqa: E501
+        :type color: str
         """
         self.swagger_types = {
-            'location': str
+            'location': str,
+            'color': str
         }
 
         self.attribute_map = {
-            'location': 'location'
+            'location': 'location',
+            'color': 'color'
         }
 
         self._location = location
+        self._color = color
 
     @classmethod
     def from_dict(cls, dikt) -> 'ApiResponse':
@@ -62,3 +67,24 @@ class ApiResponse(Model):
         """
 
         self._location = location
+
+    @property
+    def color(self) -> str:
+        """Gets the color of this ApiResponse.
+
+
+        :return: The color of this ApiResponse.
+        :rtype: str
+        """
+        return self._color
+
+    @color.setter
+    def color(self, color: str):
+        """Sets the color of this ApiResponse.
+
+
+        :param color: The color of this ApiResponse.
+        :type color: str
+        """
+
+        self._color = color
