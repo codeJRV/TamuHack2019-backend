@@ -6,7 +6,7 @@ info:
   title: "Flight API"
   contact:
     email: "jibin@tamu.edu"
-host: "0.0.0.0:8080"
+host: "127.0.0.1:8080"
 basePath: "/bagloader/"
 tags:
 - name: "BagLoader"
@@ -98,5 +98,10 @@ definitions:
     xml:
       name: "Bag"
   ApiResponse:
-    type: "string"
-    example: "37_Mid"
+    type: "object"
+    properties:
+      location:
+        type: "string"
+        example: "Mid_37"
+    example:
+      location: "Mid_37"

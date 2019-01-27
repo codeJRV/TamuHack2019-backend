@@ -15,15 +15,21 @@ class ApiResponse(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self):  # noqa: E501
+    def __init__(self, location: str=None):  # noqa: E501
         """ApiResponse - a model defined in Swagger
 
+        :param location: The location of this ApiResponse.  # noqa: E501
+        :type location: str
         """
         self.swagger_types = {
+            'location': str
         }
 
         self.attribute_map = {
+            'location': 'location'
         }
+
+        self._location = location
 
     @classmethod
     def from_dict(cls, dikt) -> 'ApiResponse':
@@ -35,3 +41,24 @@ class ApiResponse(Model):
         :rtype: ApiResponse
         """
         return util.deserialize_model(dikt, cls)
+
+    @property
+    def location(self) -> str:
+        """Gets the location of this ApiResponse.
+
+
+        :return: The location of this ApiResponse.
+        :rtype: str
+        """
+        return self._location
+
+    @location.setter
+    def location(self, location: str):
+        """Sets the location of this ApiResponse.
+
+
+        :param location: The location of this ApiResponse.
+        :type location: str
+        """
+
+        self._location = location
